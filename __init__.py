@@ -90,6 +90,11 @@ class ParseObject(ParseBase):
 
         self = self.__init__(None)
 
+    def parseRepresentation(self):
+        return {'__type': 'Pointer',
+                'className': self._class_name,
+                'objectId': self._object_id}
+
     def _populateFromDict(self, attrs_dict):
         self._object_id = attrs_dict['objectId']
         self._created_at = attrs_dict['createdAt']
@@ -107,9 +112,7 @@ class ParseObject(ParseBase):
         key, value = prop
 
         if type(value) == ParseObject:
-            value = {'__type': 'Pointer',
-                    'className': value._class_name,
-                    'objectId': value._object_id}
+            value = value.parseRepresentation()
         elif type(value) == datetime.datetime:
             value = {'__type': 'Date',
                     'iso': value.isoformat()[:-3] + 'Z'} # take off the last 3 digits and add a Z
@@ -184,6 +187,8 @@ class ParseQuery(ParseBase):
         self._object_id = ''
 
     def eq(self, name, value):
+        if type(value) == ParseObject:
+            value = value.parseRepresentation()
         self._where[name] = value
         return self
 
