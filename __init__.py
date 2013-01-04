@@ -59,6 +59,9 @@ class ParseBase(object):
                                             "%Y-%m-%dT%H:%M:%S.%f%Z")
         return date
 
+    def __repr__(self):
+        return "<%s>(%r)" % (self.__class__, self.__dict__)
+
 
 class ParseObject(ParseBase):
     def __init__(self, class_name, attrs_dict=None):
