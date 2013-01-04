@@ -22,7 +22,7 @@ import re
 API_ROOT = 'https://api.parse.com/1/classes'
 
 APPLICATION_ID = ''
-MASTER_KEY = ''
+CLIENT_KEY = ''
 
 
 class ParseBinaryDataWrapper(str):
@@ -41,7 +41,7 @@ class ParseBase(object):
         #                            (APPLICATION_ID, MASTER_KEY))
         #request.add_header("Authorization", auth_header)
         request.add_header("X-Parse-Application-Id", APPLICATION_ID)
-        request.add_header("X-Parse-REST-API-Key", MASTER_KEY)
+        request.add_header("X-Parse-REST-API-Key", CLIENT_KEY)
 
         request.get_method = lambda: http_verb
 
@@ -123,6 +123,11 @@ class ParseObject(ParseBase):
             return re.search("\\bPOINT\\(([-+]?[0-9]*\\.?[0-9]*) " +
                              "([-+]?[0-9]*\\.?[0-9]*)\\)", value, re.I)
 
+    def parseRepresentation(self):
+        return {'__type': 'Pointer',
+                'className': self._class_name,
+                'objectId': self._object_id}
+
     def _populateFromDict(self, attrs_dict):
         if 'objectId' in attrs_dict:
             self._object_id = attrs_dict['objectId']
@@ -142,9 +147,7 @@ class ParseObject(ParseBase):
         key, value = prop
 
         if type(value) == ParseObject:
-            value = {'__type': 'Pointer',
-                    'className': value._class_name,
-                    'objectId': value._object_id}
+            value = value.parseRepresentation()
         elif type(value) == datetime.datetime:
             # take off the last 3 digits and add a Z
             value = {'__type': 'Date', 'iso': value.isoformat()[:-3] + 'Z'}
@@ -232,6 +235,8 @@ class ParseQuery(ParseBase):
         self._object_id = ''
 
     def eq(self, name, value):
+        if type(value) == ParseObject:
+            value = value.parseRepresentation()
         self._where[name] = value
         return self
 
