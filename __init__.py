@@ -226,6 +226,13 @@ class ParseObject(ParseBase):
 
         self._updated_at = response_dict['updatedAt']
 
+    def __str__(self):
+        return "%s(system:{className=%s,objectId=%s,createdAt=%s,updatedAt=%s}user:%s)" % (self.__class__, 
+                                                                               self._class_name,
+                                                                               self._object_id,
+                                                                               self._created_at,
+                                                                               self._updated_at,
+                                                                               self._getJSONProperties())
 
 class ParseQuery(ParseBase):
     def __init__(self, class_name):
