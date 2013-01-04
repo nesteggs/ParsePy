@@ -22,7 +22,7 @@ import re
 API_ROOT = 'https://api.parse.com/1/classes'
 
 APPLICATION_ID = ''
-CLIENT_KEY = ''
+MASTER_KEY = ''
 
 
 class ParseBinaryDataWrapper(str):
@@ -41,7 +41,7 @@ class ParseBase(object):
         #                            (APPLICATION_ID, MASTER_KEY))
         #request.add_header("Authorization", auth_header)
         request.add_header("X-Parse-Application-Id", APPLICATION_ID)
-        request.add_header("X-Parse-REST-API-Key", CLIENT_KEY)
+        request.add_header("X-Parse-REST-API-Key", MASTER_KEY)
 
         request.get_method = lambda: http_verb
 
